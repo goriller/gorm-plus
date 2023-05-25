@@ -19,9 +19,10 @@ package gplus
 
 import (
 	"fmt"
-	"github.com/acmestack/gorm-plus/constants"
 	"reflect"
 	"strings"
+
+	"github.com/goriller/gorm-plus/constants"
 )
 
 type QueryCond[T any] struct {
