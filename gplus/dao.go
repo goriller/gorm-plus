@@ -21,7 +21,6 @@ import (
 	"database/sql"
 	"reflect"
 
-	"github.com/goriller/gorm-plus/constants"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 	"gorm.io/gorm/utils"
@@ -341,7 +340,7 @@ func getPkColumnName[T any]() string {
 		}
 	}
 	if columnName == "" {
-		return constants.DefaultPrimaryName
+		return DefaultPrimaryName
 	}
 	return columnName
 }

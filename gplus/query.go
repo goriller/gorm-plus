@@ -21,8 +21,6 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
-
-	"github.com/goriller/gorm-plus/constants"
 )
 
 type QueryCond[T any] struct {
@@ -87,65 +85,65 @@ func NewQueryModel[T any, R any]() (*QueryCond[T], *T, *R) {
 
 // Eq 等于 =
 func (q *QueryCond[T]) Eq(column any, val any) *QueryCond[T] {
-	q.addCond(column, val, constants.Eq)
+	q.addCond(column, val, Eq)
 	return q
 }
 
 // Ne 不等于 !=
 func (q *QueryCond[T]) Ne(column any, val any) *QueryCond[T] {
-	q.addCond(column, val, constants.Ne)
+	q.addCond(column, val, Ne)
 	return q
 }
 
 // Gt 大于 >
 func (q *QueryCond[T]) Gt(column any, val any) *QueryCond[T] {
-	q.addCond(column, val, constants.Gt)
+	q.addCond(column, val, Gt)
 	return q
 }
 
 // Ge 大于等于 >=
 func (q *QueryCond[T]) Ge(column any, val any) *QueryCond[T] {
-	q.addCond(column, val, constants.Ge)
+	q.addCond(column, val, Ge)
 	return q
 }
 
 // Lt 小于 <
 func (q *QueryCond[T]) Lt(column any, val any) *QueryCond[T] {
-	q.addCond(column, val, constants.Lt)
+	q.addCond(column, val, Lt)
 	return q
 }
 
 // Le 小于等于 <=
 func (q *QueryCond[T]) Le(column any, val any) *QueryCond[T] {
-	q.addCond(column, val, constants.Le)
+	q.addCond(column, val, Le)
 	return q
 }
 
 // Like 模糊 LIKE '%值%'
 func (q *QueryCond[T]) Like(column any, val any) *QueryCond[T] {
 	s := fmt.Sprintf("%v", val)
-	q.addCond(column, "%"+s+"%", constants.Like)
+	q.addCond(column, "%"+s+"%", Like)
 	return q
 }
 
 // NotLike 非模糊 NOT LIKE '%值%'
 func (q *QueryCond[T]) NotLike(column any, val any) *QueryCond[T] {
 	s := fmt.Sprintf("%v", val)
-	q.addCond(column, "%"+s+"%", constants.Not+" "+constants.Like)
+	q.addCond(column, "%"+s+"%", Not+" "+Like)
 	return q
 }
 
 // LikeLeft 左模糊 LIKE '%值'
 func (q *QueryCond[T]) LikeLeft(column any, val any) *QueryCond[T] {
 	s := fmt.Sprintf("%v", val)
-	q.addCond(column, "%"+s, constants.Like)
+	q.addCond(column, "%"+s, Like)
 	return q
 }
 
 // LikeRight 右模糊 LIKE '值%'
 func (q *QueryCond[T]) LikeRight(column any, val any) *QueryCond[T] {
 	s := fmt.Sprintf("%v", val)
-	q.addCond(column, s+"%", constants.Like)
+	q.addCond(column, s+"%", Like)
 	return q
 }
 
@@ -169,13 +167,13 @@ func (q *QueryCond[T]) IsNotNull(column any) *QueryCond[T] {
 
 // In 字段 IN (值1, 值2, ...)
 func (q *QueryCond[T]) In(column any, val any) *QueryCond[T] {
-	q.addCond(column, val, constants.In)
+	q.addCond(column, val, In)
 	return q
 }
 
 // NotIn 字段 NOT IN (值1, 值2, ...)
 func (q *QueryCond[T]) NotIn(column any, val any) *QueryCond[T] {
-	q.addCond(column, val, constants.Not+" "+constants.In)
+	q.addCond(column, val, Not+" "+In)
 	return q
 }
 
@@ -183,7 +181,7 @@ func (q *QueryCond[T]) NotIn(column any, val any) *QueryCond[T] {
 func (q *QueryCond[T]) Between(column any, start, end any) *QueryCond[T] {
 	columnName := getColumnName(column)
 	q.buildAndIfNeed()
-	cond := fmt.Sprintf("%s %s ? and ? ", columnName, constants.Between)
+	cond := fmt.Sprintf("%s %s ? and ? ", columnName, Between)
 	q.queryBuilder.WriteString(cond)
 	q.queryArgs = append(q.queryArgs, start, end)
 	return q
@@ -193,7 +191,7 @@ func (q *QueryCond[T]) Between(column any, start, end any) *QueryCond[T] {
 func (q *QueryCond[T]) NotBetween(column any, start, end any) *QueryCond[T] {
 	columnName := getColumnName(column)
 	q.buildAndIfNeed()
-	cond := fmt.Sprintf("%s %s %s ? and ? ", columnName, constants.Not, constants.Between)
+	cond := fmt.Sprintf("%s %s %s ? and ? ", columnName, Not, Between)
 	q.queryBuilder.WriteString(cond)
 	q.queryArgs = append(q.queryArgs, start, end)
 	return q
@@ -214,13 +212,13 @@ func (q *QueryCond[T]) And(fn ...func(q *QueryCond[T])) *QueryCond[T] {
 	if len(fn) > 0 {
 		nestQuery := &QueryCond[T]{}
 		fn[0](nestQuery)
-		q.andNestBuilder.WriteString(constants.And + " " + constants.LeftBracket + nestQuery.queryBuilder.String() + constants.RightBracket + " ")
+		q.andNestBuilder.WriteString(And + " " + LeftBracket + nestQuery.queryBuilder.String() + RightBracket + " ")
 		q.andNestArgs = append(q.andNestArgs, nestQuery.queryArgs...)
 		return q
 	}
-	q.queryBuilder.WriteString(constants.And)
+	q.queryBuilder.WriteString(And)
 	q.queryBuilder.WriteString(" ")
-	q.lastCond = constants.And
+	q.lastCond = And
 	return q
 }
 
@@ -229,13 +227,13 @@ func (q *QueryCond[T]) Or(fn ...func(q *QueryCond[T])) *QueryCond[T] {
 	if len(fn) > 0 {
 		nestQuery := &QueryCond[T]{}
 		fn[0](nestQuery)
-		q.orNestBuilder.WriteString(constants.Or + " " + constants.LeftBracket + nestQuery.queryBuilder.String() + constants.RightBracket + " ")
+		q.orNestBuilder.WriteString(Or + " " + LeftBracket + nestQuery.queryBuilder.String() + RightBracket + " ")
 		q.orNestArgs = append(q.orNestArgs, nestQuery.queryArgs...)
 		return q
 	}
-	q.queryBuilder.WriteString(constants.Or)
+	q.queryBuilder.WriteString(Or)
 	q.queryBuilder.WriteString(" ")
-	q.lastCond = constants.Or
+	q.lastCond = Or
 	return q
 }
 
@@ -255,7 +253,7 @@ func (q *QueryCond[T]) OrderByDesc(columns ...any) *QueryCond[T] {
 		columnName := getColumnName(v)
 		columnNames = append(columnNames, columnName)
 	}
-	q.buildOrder(constants.Desc, columnNames...)
+	q.buildOrder(Desc, columnNames...)
 	return q
 }
 
@@ -266,7 +264,7 @@ func (q *QueryCond[T]) OrderByAsc(columns ...any) *QueryCond[T] {
 		columnName := getColumnName(v)
 		columnNames = append(columnNames, columnName)
 	}
-	q.buildOrder(constants.Asc, columnNames...)
+	q.buildOrder(Asc, columnNames...)
 	return q
 }
 
@@ -275,7 +273,7 @@ func (q *QueryCond[T]) Group(columns ...any) *QueryCond[T] {
 	for _, v := range columns {
 		columnName := getColumnName(v)
 		if q.groupBuilder.Len() > 0 {
-			q.groupBuilder.WriteString(constants.Comma)
+			q.groupBuilder.WriteString(Comma)
 		}
 		q.groupBuilder.WriteString(columnName)
 	}
@@ -329,8 +327,8 @@ func (q *QueryCond[T]) addCond(column any, val any, condType string) {
 }
 
 func (q *QueryCond[T]) buildAndIfNeed() {
-	if q.lastCond != constants.And && q.lastCond != constants.Or && q.queryBuilder.Len() > 0 {
-		q.queryBuilder.WriteString(constants.And)
+	if q.lastCond != And && q.lastCond != Or && q.queryBuilder.Len() > 0 {
+		q.queryBuilder.WriteString(And)
 		q.queryBuilder.WriteString(" ")
 	}
 }
@@ -338,7 +336,7 @@ func (q *QueryCond[T]) buildAndIfNeed() {
 func (q *QueryCond[T]) buildOrder(orderType string, columns ...string) {
 	for _, v := range columns {
 		if q.orderBuilder.Len() > 0 {
-			q.orderBuilder.WriteString(constants.Comma)
+			q.orderBuilder.WriteString(Comma)
 		}
 		q.orderBuilder.WriteString(v)
 		q.orderBuilder.WriteString(" ")

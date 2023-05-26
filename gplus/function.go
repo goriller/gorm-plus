@@ -19,8 +19,6 @@ package gplus
 
 import (
 	"strings"
-
-	"github.com/goriller/gorm-plus/constants"
 )
 
 type Function struct {
@@ -28,75 +26,75 @@ type Function struct {
 }
 
 func (f *Function) As(asName any) string {
-	return f.funStr + " " + constants.As + " " + getColumnName(asName)
+	return f.funStr + " " + As + " " + getColumnName(asName)
 }
 
 func (f *Function) Eq(value int64) (string, int64) {
-	return buildFunStr(f.funStr, constants.Eq, value)
+	return buildFunStr(f.funStr, Eq, value)
 }
 
 func (f *Function) Ne(value int64) (string, int64) {
-	return buildFunStr(f.funStr, constants.Ne, value)
+	return buildFunStr(f.funStr, Ne, value)
 }
 
 func (f *Function) Gt(value int64) (string, int64) {
-	return buildFunStr(f.funStr, constants.Gt, value)
+	return buildFunStr(f.funStr, Gt, value)
 }
 
 func (f *Function) Ge(value int64) (string, int64) {
-	return buildFunStr(f.funStr, constants.Ge, value)
+	return buildFunStr(f.funStr, Ge, value)
 }
 
 func (f *Function) Lt(value int64) (string, int64) {
-	return buildFunStr(f.funStr, constants.Lt, value)
+	return buildFunStr(f.funStr, Lt, value)
 }
 
 func (f *Function) Le(value int64) (string, int64) {
-	return buildFunStr(f.funStr, constants.Le, value)
+	return buildFunStr(f.funStr, Le, value)
 }
 
 func (f *Function) In(values ...any) (string, []any) {
 	// 构建占位符
 	placeholder := buildPlaceholder(values)
-	return f.funStr + " " + constants.In + placeholder.String(), values
+	return f.funStr + " " + In + placeholder.String(), values
 }
 
 func (f *Function) NotIn(values ...any) (string, []any) {
 	// 构建占位符
 	placeholder := buildPlaceholder(values)
-	return f.funStr + " " + constants.Not + " " + constants.In + placeholder.String(), values
+	return f.funStr + " " + Not + " " + In + placeholder.String(), values
 }
 
 func (f *Function) Between(start int64, end int64) (string, int64, int64) {
-	return f.funStr + " " + constants.Between + " ? and ?", start, end
+	return f.funStr + " " + Between + " ? and ?", start, end
 }
 
 func (f *Function) NotBetween(start int64, end int64) (string, int64, int64) {
-	return f.funStr + " " + constants.Not + " " + constants.Between + " ? and ?", start, end
+	return f.funStr + " " + Not + " " + Between + " ? and ?", start, end
 }
 
 func Sum(columnName any) *Function {
-	return &Function{funStr: addBracket(constants.SUM, getColumnName(columnName))}
+	return &Function{funStr: addBracket(SUM, getColumnName(columnName))}
 }
 
 func Avg(columnName any) *Function {
-	return &Function{funStr: addBracket(constants.AVG, getColumnName(columnName))}
+	return &Function{funStr: addBracket(AVG, getColumnName(columnName))}
 }
 
 func Max(columnName any) *Function {
-	return &Function{funStr: addBracket(constants.MAX, getColumnName(columnName))}
+	return &Function{funStr: addBracket(MAX, getColumnName(columnName))}
 }
 
 func Min(columnName any) *Function {
-	return &Function{funStr: addBracket(constants.MIN, getColumnName(columnName))}
+	return &Function{funStr: addBracket(MIN, getColumnName(columnName))}
 }
 
 func Count(columnName any) *Function {
-	return &Function{funStr: addBracket(constants.COUNT, getColumnName(columnName))}
+	return &Function{funStr: addBracket(COUNT, getColumnName(columnName))}
 }
 
 func addBracket(function string, columnNameStr string) string {
-	return function + constants.LeftBracket + columnNameStr + constants.RightBracket
+	return function + LeftBracket + columnNameStr + RightBracket
 }
 
 func buildFunStr(funcStr string, typeStr string, value int64) (string, int64) {
@@ -105,11 +103,11 @@ func buildFunStr(funcStr string, typeStr string, value int64) (string, int64) {
 
 func buildPlaceholder(values []any) strings.Builder {
 	var placeholder strings.Builder
-	placeholder.WriteString(constants.LeftBracket)
+	placeholder.WriteString(LeftBracket)
 	for i := 0; i < len(values); i++ {
 		if i == len(values)-1 {
 			placeholder.WriteString("?")
-			placeholder.WriteString(constants.RightBracket)
+			placeholder.WriteString(RightBracket)
 			break
 		}
 		placeholder.WriteString("?")
